@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Almoxarifado - Fardamentos da Segurança</title>
+    
+    <!-- React e ReactDOM via CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel para traduzir JSX no navegador -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Bibliotecas para gerar PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Estilos globais para animações -->
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        /* Custom scrollbar para as listas */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // --- ÍCONES (SVG Inline) ---
+        const Icon = ({ children, size = 24, className = "" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                {children}
+            </svg>
+        );
+
+        const SearchIcon = (props) => <Icon {...props}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></Icon>;
+        const UsersIcon = (props) => <Icon {...props}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></Icon>;
+        const UserPlusIcon = (props) => <Icon {...props}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></Icon>;
+        const ShieldIcon = (props) => <Icon {...props}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></Icon>;
+        const ShirtIcon = (props) => <Icon {...props}><path d="M20.38 3.46 16 2a8 8 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></Icon>;
+        const DownloadIcon = (props) => <Icon {...props}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></Icon>;
+        const UploadIcon = (props) => <Icon {...props}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></Icon>;
+        const FileTextIcon = (props) => <Icon {...props}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></Icon>;
+        const TrashIcon = (props) => <Icon {...props}><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></Icon>;
+        const EditIcon = (props) => <Icon {...props}><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></Icon>;
+        const PlusIcon = (props) => <Icon {...props}><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></Icon>;
+        const MinusIcon = (props) => <Icon {...props}><line x1="5" y1="12" x2="19" y2="12"/></Icon>;
+        const XIcon = (props) => <Icon {...props}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></Icon>;
+        const CheckCircleIcon = (props) => <Icon {...props}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></Icon>;
+        const CalendarIcon = (props) => <Icon {...props}><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></Icon>;
+        const PackageIcon = (props) => <Icon {...props}><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></Icon>;
+        const AlertTriangleIcon = (props) => <Icon {...props}><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></Icon>;
+        const ChevronLeftIcon = (props) => <Icon {...props}><path d="m15 18-6-6 6-6"/></Icon>;
+        const ChevronRightIcon = (props) => <Icon {...props}><path d="m9 18 6-6-6-6"/></Icon>;
+
+        // --- APLICAÇÃO REACT ---
+        const { useState, useEffect, useMemo, useRef } = React;
+
+        function AlmoxarifadoApp() {
+            // --- Navegação ---
+            const [activeTab, setActiveTab] = useState('EMPLOYEES'); // 'EMPLOYEES' | 'INVENTORY'
+
+            // --- Estados de Dados ---
+            const [employees, setEmployees] = useState([]);
+            const [inventory, setInventory] = useState([]); // Novo estado para Estoque
+            
+            // --- Filtros e Paginação ---
+            const [searchTerm, setSearchTerm] = useState('');
+            const [invSearch, setInvSearch] = useState('');
+            const [invPage, setInvPage] = useState(1);
+            const invItemsPerPage = 10;
+            
+            const fileInputRef = useRef(null);
+            
+            // --- Estados de Modais ---
+            const [isAddingEmployee, setIsAddingEmployee] = useState(false);
+            const [managingEmployee, setManagingEmployee] = useState(null); 
+            const [isAddingUniform, setIsAddingUniform] = useState(false);
+            const [isAddingInventory, setIsAddingInventory] = useState(false);
+            const [notification, setNotification] = useState(null);
+            const [confirmDialog, setConfirmDialog] = useState(null); // Fix para o bug do confirm()
+
+            const [editingEmployee, setEditingEmployee] = useState(null);
+            const [editEmpData, setEditEmpData] = useState({ name: '', role: '', post: '' });
+
+            const [editingInventory, setEditingInventory] = useState(null);
+            const [editInvData, setEditInvData] = useState({ name: '', type: '', size: '', quantity: 1 });
+
+            const [editingUniform, setEditingUniform] = useState(null);
+            const [editUniData, setEditUniData] = useState({ type: '', size: '', quantity: 1 });
+
+            // --- Formulários ---
+            const [newEmpName, setNewEmpName] = useState('');
+            const [newEmpRole, setNewEmpRole] = useState('Agente de Segurança');
+            const [newEmpPost, setNewEmpPost] = useState('');
+
+            const [newUniType, setNewUniType] = useState('Camisa');
+            const [newUniSize, setNewUniSize] = useState('');
+            const [newUniQty, setNewUniQty] = useState(1);
+
+            const [invNewName, setInvNewName] = useState('');
+            const [invNewType, setInvNewType] = useState('Camisa');
+            const [invNewSize, setInvNewSize] = useState('');
+            const [invNewQty, setInvNewQty] = useState(1);
+
+            const uniformTypes = ['Camisa', 'Calça', 'Bota', 'Camisa branca Comum', 'Cinto', 'Outro'];
+
+            // --- Inicialização e LocalStorage ---
+            useEffect(() => {
+                const savedData = localStorage.getItem('almoxarifadoData');
+                let loadedEmployees = [];
+                let loadedInventory = [];
+
+                if (savedData) {
+                    try {
+                        const parsed = JSON.parse(savedData);
+                        // Suporte para o backup antigo (que era só uma array) e o novo (objeto)
+                        if (Array.isArray(parsed)) {
+                            loadedEmployees = parsed;
+                        } else {
+                            loadedEmployees = parsed.employees || [];
+                            loadedInventory = parsed.inventory || [];
+                        }
+                    } catch (e) {
+                        console.error("Erro ao carregar dados", e);
+                    }
+                }
+
+                // Injeção automática da lista de colaboradores fornecida (Roda apenas uma vez)
+                const isListLoaded = localStorage.getItem('initialListLoaded_v1');
+                if (!isListLoaded) {
+                    const defaultNames = [
+                        "Alex Neves Luz", "Bruno de Jesus Dias Gomes", "Carlos Arantes Evaristo",
+                        "Carlos Eduardo Barroso Paschoalin", "Carlos Eduardo de Paiva Faria",
+                        "Edilza Ferreira Dias", "Erivelton Aloisio", "Filipe Trindade de Oliveira",
+                        "Flávio Martins Santiago", "Ramon Rocha de Souza", "Leidimara Elaine de Oliveira",
+                        "José Márcio Feitosa Minas", "Juliane Pacheco de Campos", "Luciane Mirtes Rezende",
+                        "Luciano do Nascimento", "Luciano Trindade de Oliveira", "Marcos Vinícios de Souza Franck",
+                        "Matheus Dias Schaefer", "Thiago Luiz Dos Reis Silva", "Walber Silva Palaroni",
+                        "Welerton de Jesus Teixeira", "Rafael de Jesus Santos"
+                    ];
+
+                    const defaultUniforms = [
+                        { type: 'Camisa', size: 'M', quantity: 2 },
+                        { type: 'Calça', size: '42', quantity: 2 },
+                        { type: 'Bota', size: '40', quantity: 1 }
+                    ];
+
+                    const initialEmployees = defaultNames.map((name, index) => {
+                        const empId = `emp_default_${index}_${Date.now()}`;
+                        return {
+                            id: empId,
+                            name: name,
+                            role: 'Agente de Segurança',
+                            post: 'A definir',
+                            uniforms: defaultUniforms.map((u, uIndex) => ({
+                                id: `u_${empId}_${uIndex}`,
+                                type: u.type,
+                                size: u.size,
+                                quantity: u.quantity,
+                                assignedAt: new Date().toLocaleString('pt-BR')
+                            }))
+                        };
+                    });
+
+                    // Evita duplicar se já existirem colaboradores com esses nomes
+                    const newEmployeesToAdd = initialEmployees.filter(
+                        newEmp => !loadedEmployees.some(emp => emp.name === newEmp.name)
+                    );
+
+                    // Remove o "João Silva" de demonstração se ele for o único
+                    if (loadedEmployees.length === 1 && loadedEmployees[0].id === 'demo1') {
+                        loadedEmployees = [];
+                    }
+
+                    loadedEmployees = [...loadedEmployees, ...newEmployeesToAdd];
+                    localStorage.setItem('initialListLoaded_v1', 'true'); // Marca que a lista já foi inserida
+                }
+
+                setEmployees(loadedEmployees);
+                setInventory(loadedInventory.length > 0 ? loadedInventory : [
+                    { id: 'inv1', name: 'Camisa Tática Padrão', type: 'Camisa', size: 'M', quantity: 100, addedAt: new Date().toLocaleString('pt-BR') },
+                    { id: 'inv2', name: 'Calça Operacional', type: 'Calça', size: '42', quantity: 100, addedAt: new Date().toLocaleString('pt-BR') },
+                    { id: 'inv3', name: 'Coturno Tático', type: 'Bota', size: '40', quantity: 50, addedAt: new Date().toLocaleString('pt-BR') },
+                    { id: 'inv4', name: 'Camisa Branca', type: 'Camisa branca Comum', size: 'M', quantity: 50, addedAt: new Date().toLocaleString('pt-BR') },
+                    { id: 'inv5', name: 'Cinto de Guarnição', type: 'Cinto', size: 'ÚNICO', quantity: 50, addedAt: new Date().toLocaleString('pt-BR') }
+                ]);
+            }, []);
+
+            useEffect(() => {
+                if (employees.length >= 0 || inventory.length >= 0) {
+                    localStorage.setItem('almoxarifadoData', JSON.stringify({ employees, inventory }));
+                }
+            }, [employees, inventory]);
+
+            // --- Backup (Exportar/Importar) ---
+            const handleExportData = () => {
+                const dataStr = JSON.stringify({ employees, inventory }, null, 2);
+                const blob = new Blob([dataStr], { type: "application/json" });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.download = `almoxarifado_backup_${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.json`;
+                link.href = url;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showNotification("Backup salvo com sucesso!", "success");
+            };
+
+            const handleImportClick = () => fileInputRef.current.click();
+
+            const handleFileChange = (event) => {
+                const file = event.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const importedData = JSON.parse(e.target.result);
+                        setConfirmDialog({
+                            title: "Restaurar Backup",
+                            message: "Isso substituirá todos os dados atuais (Colaboradores e Estoque) pelos do arquivo. Tem certeza?",
+                            onConfirm: () => {
+                                if (Array.isArray(importedData)) {
+                                    setEmployees(importedData);
+                                    setInventory([]);
+                                } else {
+                                    setEmployees(importedData.employees || []);
+                                    setInventory(importedData.inventory || []);
+                                }
+                                showNotification("Dados restaurados com sucesso!", "success");
+                            }
+                        });
+                    } catch (error) {
+                        showNotification("Erro ao ler o arquivo.", "error");
+                    }
+                    event.target.value = null; 
+                };
+                reader.readAsText(file);
+            };
+
+            const showNotification = (msg, type) => {
+                setNotification({ msg, type });
+                setTimeout(() => setNotification(null), 3000);
+            };
+
+            // --- Lógica de Empregados ---
+            const handleAddEmployee = (e) => {
+                e.preventDefault();
+                if (!newEmpName.trim()) return;
+                const newEmployee = {
+                    id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
+                    name: newEmpName.trim(), role: newEmpRole, post: newEmpPost, uniforms: []
+                };
+                setEmployees([...employees, newEmployee]);
+                setIsAddingEmployee(false);
+                setNewEmpName(''); setNewEmpPost('');
+                showNotification("Colaborador cadastrado!", "success");
+            };
+
+            const handleDeleteEmployee = (empId) => {
+                setConfirmDialog({
+                    title: "Excluir Colaborador",
+                    message: "Tem certeza que deseja excluir este colaborador e todo o seu histórico de fardamento? Esta ação não pode ser desfeita.",
+                    onConfirm: () => {
+                        setEmployees(employees.filter(emp => emp.id !== empId));
+                        if(managingEmployee && managingEmployee.id === empId) setManagingEmployee(null);
+                        showNotification("Colaborador removido.", "success");
+                    }
+                });
+            };
+
+            const handleAddUniform = (e) => {
+                e.preventDefault();
+                if (!managingEmployee || !newUniSize.trim() || newUniQty < 1) return;
+                
+                const sizeUpper = newUniSize.trim().toUpperCase();
+                const qty = parseInt(newUniQty);
+
+                const newItem = {
+                    id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
+                    type: newUniType, size: sizeUpper, quantity: qty,
+                    assignedAt: new Date().toLocaleString('pt-BR')
+                };
+
+                // --- Dedução automática do Estoque ---
+                let updatedInventory = [...inventory];
+                const invIndex = updatedInventory.findIndex(i => i.type === newUniType && i.size === sizeUpper);
+                
+                if (invIndex >= 0) {
+                    updatedInventory[invIndex] = {
+                        ...updatedInventory[invIndex],
+                        quantity: updatedInventory[invIndex].quantity - qty
+                    };
+                } else {
+                    // Cria uma entrada no estoque com número negativo para sinalizar falta
+                    updatedInventory.push({
+                        id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString() + "_inv",
+                        name: `${newUniType} (Adicionado auto.)`,
+                        type: newUniType,
+                        size: sizeUpper,
+                        quantity: -qty,
+                        addedAt: new Date().toLocaleString('pt-BR')
+                    });
+                }
+
+                // --- Atualização do Colaborador ---
+                const updatedEmployees = employees.map(emp => {
+                    if (emp.id === managingEmployee.id) {
+                        const updatedEmp = { ...emp, uniforms: [...emp.uniforms, newItem] };
+                        setManagingEmployee(updatedEmp);
+                        return updatedEmp;
+                    }
+                    return emp;
+                });
+                
+                setInventory(updatedInventory);
+                setEmployees(updatedEmployees);
+                setIsAddingUniform(false);
+                setNewUniSize(''); setNewUniQty(1);
+                showNotification(`Peça adicionada e deduzida do estoque!`, "success");
+            };
+
+            const handleRemoveUniform = (uniformId) => {
+                setConfirmDialog({
+                    title: "Devolver Peça",
+                    message: "A peça será removida do colaborador e a quantidade retornará automaticamente ao estoque. Confirmar?",
+                    onConfirm: () => {
+                        let returnedItem = null;
+                        
+                        // Remove do colaborador
+                        const updatedEmployees = employees.map(emp => {
+                            if (emp.id === managingEmployee.id) {
+                                returnedItem = emp.uniforms.find(u => u.id === uniformId);
+                                const updatedEmp = { ...emp, uniforms: emp.uniforms.filter(u => u.id !== uniformId) };
+                                setManagingEmployee(updatedEmp);
+                                return updatedEmp;
+                            }
+                            return emp;
+                        });
+
+                        // Adiciona de volta ao Estoque
+                        if (returnedItem) {
+                            let updatedInventory = [...inventory];
+                            const invIndex = updatedInventory.findIndex(i => i.type === returnedItem.type && i.size === returnedItem.size);
+                            if (invIndex >= 0) {
+                                updatedInventory[invIndex] = {
+                                    ...updatedInventory[invIndex],
+                                    quantity: updatedInventory[invIndex].quantity + returnedItem.quantity
+                                };
+                            } else {
+                                updatedInventory.push({
+                                    id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString() + "_inv",
+                                    name: `${returnedItem.type} (Devolução)`,
+                                    type: returnedItem.type,
+                                    size: returnedItem.size,
+                                    quantity: returnedItem.quantity,
+                                    addedAt: new Date().toLocaleString('pt-BR')
+                                });
+                            }
+                            setInventory(updatedInventory);
+                        }
+
+                        setEmployees(updatedEmployees);
+                        showNotification("Peça devolvida ao estoque!", "success");
+                    }
+                });
+            };
+
+            const openEditUniform = (uniform) => {
+                setEditUniData({ type: uniform.type, size: uniform.size, quantity: uniform.quantity });
+                setEditingUniform(uniform);
+            };
+
+            const handleSaveUniformEdit = (e) => {
+                e.preventDefault();
+                if (!editUniData.size.trim() || editUniData.quantity < 1) return;
+
+                const sizeUpper = editUniData.size.trim().toUpperCase();
+                const newQty = parseInt(editUniData.quantity);
+
+                // Reverter estoque antigo
+                let updatedInventory = [...inventory];
+                const oldInvIndex = updatedInventory.findIndex(i => i.type === editingUniform.type && i.size === editingUniform.size);
+                if (oldInvIndex >= 0) {
+                    updatedInventory[oldInvIndex] = { ...updatedInventory[oldInvIndex], quantity: updatedInventory[oldInvIndex].quantity + editingUniform.quantity };
+                } else {
+                    updatedInventory.push({
+                        id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString() + "_inv_ret",
+                        name: `${editingUniform.type} (Devolução/Ajuste)`, type: editingUniform.type, size: editingUniform.size, quantity: editingUniform.quantity, addedAt: new Date().toLocaleString('pt-BR')
+                    });
+                }
+
+                // Deduzir novo estoque
+                const newInvIndex = updatedInventory.findIndex(i => i.type === editUniData.type && i.size === sizeUpper);
+                if (newInvIndex >= 0) {
+                    updatedInventory[newInvIndex] = { ...updatedInventory[newInvIndex], quantity: updatedInventory[newInvIndex].quantity - newQty };
+                } else {
+                    updatedInventory.push({
+                        id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString() + "_inv_out",
+                        name: `${editUniData.type} (Adicionado auto.)`, type: editUniData.type, size: sizeUpper, quantity: -newQty, addedAt: new Date().toLocaleString('pt-BR')
+                    });
+                }
+
+                // Atualizar no colaborador
+                const updatedEmployees = employees.map(emp => {
+                    if (emp.id === managingEmployee.id) {
+                        const updatedUniforms = emp.uniforms.map(u => 
+                            u.id === editingUniform.id ? { ...u, type: editUniData.type, size: sizeUpper, quantity: newQty } : u
+                        );
+                        const updatedEmp = { ...emp, uniforms: updatedUniforms };
+                        setManagingEmployee(updatedEmp);
+                        return updatedEmp;
+                    }
+                    return emp;
+                });
+
+                setInventory(updatedInventory);
+                setEmployees(updatedEmployees);
+                setEditingUniform(null);
+                showNotification("Peça atualizada com sucesso!", "success");
+            };
+
+            // --- Lógica de Estoque ---
+            const handleAddInventory = (e) => {
+                e.preventDefault();
+                if (!invNewName.trim() || !invNewSize.trim()) return;
+                const newItem = {
+                    id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
+                    name: invNewName.trim(), type: invNewType, size: invNewSize.trim().toUpperCase(),
+                    quantity: parseInt(invNewQty), addedAt: new Date().toLocaleString('pt-BR')
+                };
+                setInventory([...inventory, newItem]);
+                setIsAddingInventory(false);
+                setInvNewName(''); setInvNewSize(''); setInvNewQty(1);
+                showNotification("Material adicionado ao estoque!", "success");
+            };
+
+            const adjustInventoryStock = (id, delta) => {
+                setInventory(inventory.map(item => {
+                    if (item.id === id) {
+                        const newQty = Math.max(0, item.quantity + delta);
+                        return { ...item, quantity: newQty };
+                    }
+                    return item;
+                }));
+            };
+
+            const removeInventoryItem = (id) => {
+                setConfirmDialog({
+                    title: "Remover do Estoque",
+                    message: "Deseja remover este registro de material definitivamente do estoque?",
+                    onConfirm: () => {
+                        setInventory(inventory.filter(item => item.id !== id));
+                        showNotification("Material removido.", "success");
+                    }
+                });
+            };
+
+            // --- Lógica de Edição ---
+            const openEditEmployee = (emp) => {
+                setEditEmpData({ name: emp.name, role: emp.role, post: emp.post });
+                setEditingEmployee(emp);
+            };
+
+            const handleSaveEmployeeEdit = (e) => {
+                e.preventDefault();
+                if(!editEmpData.name.trim()) return;
+                setEmployees(employees.map(emp => 
+                    emp.id === editingEmployee.id 
+                    ? { ...emp, name: editEmpData.name.trim(), role: editEmpData.role, post: editEmpData.post }
+                    : emp
+                ));
+                setEditingEmployee(null);
+                showNotification("Colaborador atualizado com sucesso!", "success");
+            };
+
+            const openEditInventory = (item) => {
+                setEditInvData({ name: item.name, type: item.type, size: item.size, quantity: item.quantity });
+                setEditingInventory(item);
+            };
+
+            const handleSaveInventoryEdit = (e) => {
+                e.preventDefault();
+                if(!editInvData.name.trim() || !editInvData.size.trim()) return;
+                setInventory(inventory.map(item => 
+                    item.id === editingInventory.id
+                    ? { ...item, name: editInvData.name.trim(), type: editInvData.type, size: editInvData.size.trim().toUpperCase(), quantity: parseInt(editInvData.quantity) }
+                    : item
+                ));
+                setEditingInventory(null);
+                showNotification("Material atualizado com sucesso!", "success");
+            };
+
+            // --- Filtros & Paginação ---
+            const filteredEmployees = useMemo(() => {
+                const searchLower = searchTerm.toLowerCase();
+                return employees.filter(emp => 
+                    emp.name.toLowerCase().includes(searchLower) ||
+                    emp.post.toLowerCase().includes(searchLower) ||
+                    emp.role.toLowerCase().includes(searchLower)
+                );
+            }, [employees, searchTerm]);
+
+            const filteredInventory = useMemo(() => {
+                const searchLower = invSearch.toLowerCase();
+                return inventory.filter(item => 
+                    item.name.toLowerCase().includes(searchLower) ||
+                    item.type.toLowerCase().includes(searchLower) ||
+                    item.size.toLowerCase().includes(searchLower)
+                );
+            }, [inventory, invSearch]);
+
+            // Reseta a página quando faz uma nova busca no estoque
+            useEffect(() => { setInvPage(1); }, [invSearch]);
+
+            const paginatedInventory = useMemo(() => {
+                const start = (invPage - 1) * invItemsPerPage;
+                return filteredInventory.slice(start, start + invItemsPerPage);
+            }, [filteredInventory, invPage]);
+
+            const totalInvPages = Math.ceil(filteredInventory.length / invItemsPerPage) || 1;
+
+            const stats = useMemo(() => {
+                let totalItemsDist = 0;
+                employees.forEach(emp => emp.uniforms.forEach(u => totalItemsDist += u.quantity));
+                let totalItemsStock = 0;
+                inventory.forEach(item => totalItemsStock += item.quantity);
+                return { totalEmployees: employees.length, totalItemsDist, totalItemsStock };
+            }, [employees, inventory]);
+
+            // --- Lógica de Exportação para PDF ---
+            const exportEmployeesPDF = () => {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                doc.setFontSize(16);
+                doc.text("Relatório de Efetivo e Fardamento", 14, 15);
+                doc.setFontSize(10);
+                doc.setTextColor(100);
+                doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 14, 22);
+
+                const tableColumn = ["Colaborador", "Cargo / Posto", "Fardamento Cautelado"];
+                const tableRows = [];
+
+                filteredEmployees.forEach(emp => {
+                    const fardamentoStr = emp.uniforms.length > 0
+                        ? emp.uniforms.map(u => `${u.quantity}x ${u.type} (Tam: ${u.size})`).join('\n')
+                        : 'Nenhum item vinculado';
+                        
+                    const rowData = [
+                        emp.name,
+                        `${emp.role}\n${emp.post || 'Sem posto'}`,
+                        fardamentoStr
+                    ];
+                    tableRows.push(rowData);
+                });
+
+                doc.autoTable({
+                    head: [tableColumn],
+                    body: tableRows,
+                    startY: 28,
+                    styles: { fontSize: 9, cellPadding: 3, valign: 'middle' },
+                    headStyles: { fillColor: [30, 41, 59] }, // Cor slate-800 do tema
+                    columnStyles: { 2: { cellWidth: 80 } }
+                });
+
+                doc.save(`relatorio_efetivo_${new Date().getTime()}.pdf`);
+                showNotification("Relatório PDF do Efetivo gerado!", "success");
+            };
+
+            const exportInventoryPDF = () => {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                doc.setFontSize(16);
+                doc.text("Relatório de Estoque Geral - Almoxarifado", 14, 15);
+                doc.setFontSize(10);
+                doc.setTextColor(100);
+                doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 14, 22);
+
+                const tableColumn = ["Descrição do Material", "Categoria", "Tamanho", "Qtd em Estoque"];
+                const tableRows = [];
+
+                filteredInventory.forEach(item => {
+                    const rowData = [
+                        item.name,
+                        item.type,
+                        item.size,
+                        `${item.quantity} un`
+                    ];
+                    tableRows.push(rowData);
+                });
+
+                doc.autoTable({
+                    head: [tableColumn],
+                    body: tableRows,
+                    startY: 28,
+                    styles: { fontSize: 10, cellPadding: 3 },
+                    headStyles: { fillColor: [5, 150, 105] }, // Cor emerald-600 do tema
+                });
+
+                doc.save(`relatorio_estoque_${new Date().getTime()}.pdf`);
+                showNotification("Relatório PDF do Estoque gerado!", "success");
+            };
+
+            return (
+                <div className="min-h-screen font-sans text-slate-800 pb-10 flex flex-col">
+                    {/* Header */}
+                    <header className="bg-slate-900 shadow-md sticky top-0 z-10 text-white">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="bg-slate-700 p-2.5 rounded-xl shadow-inner">
+                                        <ShieldIcon className="text-blue-400 h-6 w-6" />
+                                    </div>
+                                    <div>
+                                        <h1 className="text-xl font-bold tracking-wide">Controle de Fardamento</h1>
+                                        <p className="text-xs text-slate-400 font-medium">Departamento de Segurança</p>
+                                    </div>
+                                </div>
+                                
+                                <div className="flex flex-col sm:flex-row items-end sm:items-center gap-4">
+                                    <div className="flex items-center gap-1 bg-slate-800 p-1 rounded-lg border border-slate-700">
+                                        <input type="file" ref={fileInputRef} onChange={handleFileChange} accept=".json" style={{ display: 'none' }} />
+                                        <button onClick={handleExportData} className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-slate-300 hover:bg-slate-700 hover:text-white rounded transition-colors">
+                                            <DownloadIcon size={14} /> Backup
+                                        </button>
+                                        <div className="w-px h-4 bg-slate-600 mx-1"></div>
+                                        <button onClick={handleImportClick} className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-slate-300 hover:bg-slate-700 hover:text-white rounded transition-colors">
+                                            <UploadIcon size={14} /> Restaurar
+                                        </button>
+                                    </div>
+
+                                    <div className="flex gap-4 text-sm border-l pl-4 border-slate-700 hidden sm:flex">
+                                        <div className="flex flex-col items-center">
+                                            <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider">Efetivo</span>
+                                            <span className="flex items-center gap-1 text-white font-bold"><UsersIcon size={14} className="text-blue-400"/> {stats.totalEmployees}</span>
+                                        </div>
+                                        <div className="flex flex-col items-center">
+                                            <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider">Em Uso</span>
+                                            <span className="flex items-center gap-1 text-white font-bold"><ShirtIcon size={14} className="text-emerald-400"/> {stats.totalItemsDist}</span>
+                                        </div>
+                                        <div className="flex flex-col items-center">
+                                            <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider">Estoque</span>
+                                            <span className="flex items-center gap-1 text-white font-bold"><PackageIcon size={14} className="text-amber-400"/> {stats.totalItemsStock}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Navegação de Abas */}
+                    <div className="bg-white border-b border-slate-200">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex gap-4 pt-4">
+                            <button 
+                                onClick={() => setActiveTab('EMPLOYEES')}
+                                className={`pb-3 px-2 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${activeTab === 'EMPLOYEES' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
+                            >
+                                <UsersIcon size={18}/> Colaboradores
+                            </button>
+                            <button 
+                                onClick={() => setActiveTab('INVENTORY')}
+                                className={`pb-3 px-2 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${activeTab === 'INVENTORY' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
+                            >
+                                <PackageIcon size={18}/> Estoque Geral
+                            </button>
+                        </div>
+                    </div>
+
+                    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+                        
+                        {/* Notificação Flutuante */}
+                        {notification && (
+                            <div className={`fixed top-24 right-4 z-[70] px-4 py-3 rounded-lg shadow-xl text-white text-sm font-medium animate-fade-in-up border ${
+                                notification.type === 'error' ? 'bg-red-600 border-red-500' : 'bg-emerald-600 border-emerald-500'
+                            }`}>
+                                <div className="flex items-center gap-2"><CheckCircleIcon size={18} /> {notification.msg}</div>
+                            </div>
+                        )}
+
+                        {/* --- ABA 1: EMPREGADOS --- */}
+                        {activeTab === 'EMPLOYEES' && (
+                            <div className="animate-fade-in-up">
+                                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 mb-6 flex flex-col md:flex-row gap-4 justify-between items-center">
+                                    <div className="relative w-full md:w-96">
+                                        <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"><SearchIcon size={20} /></div>
+                                        <input type="text" placeholder="Buscar colaborador ou posto..." className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                                    </div>
+                                    <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+                                        <button onClick={exportEmployeesPDF} disabled={filteredEmployees.length === 0} className="w-full sm:w-auto px-4 py-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-medium flex items-center justify-center gap-2 shadow-sm transition-colors disabled:opacity-50">
+                                            <FileTextIcon size={20} className="text-red-500" /> Exportar PDF
+                                        </button>
+                                        <button onClick={() => setIsAddingEmployee(true)} className="w-full sm:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium flex items-center justify-center gap-2 shadow-sm transition-colors">
+                                            <UserPlusIcon size={20} /> Cadastrar
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                                    {filteredEmployees.length > 0 ? (
+                                        filteredEmployees.map((emp) => {
+                                            const totalPecas = emp.uniforms.reduce((sum, item) => sum + item.quantity, 0);
+                                            return (
+                                                <div key={emp.id} className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col">
+                                                    <div className="p-5 border-b border-slate-100 bg-slate-50/50 flex gap-3 relative">
+                                                        <div className="h-12 w-12 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 flex-shrink-0 shadow-sm"><UsersIcon size={24} /></div>
+                                                        <div className="flex-1 min-w-0 pr-6">
+                                                            <h3 className="font-bold text-slate-800 truncate" title={emp.name}>{emp.name}</h3>
+                                                            <p className="text-xs text-blue-600 font-medium truncate">{emp.role}</p>
+                                                            <p className="text-xs text-slate-500 truncate mt-0.5">{emp.post || 'Sem posto fixo'}</p>
+                                                        </div>
+                                                        <button onClick={() => openEditEmployee(emp)} className="absolute top-5 right-4 text-slate-400 hover:text-blue-600 transition-colors" title="Editar Colaborador">
+                                                            <EditIcon size={18} />
+                                                        </button>
+                                                    </div>
+                                                    <div className="p-5 flex-1">
+                                                        <div className="flex items-center justify-between mb-3">
+                                                            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Uniformes Vinculados</span>
+                                                            <span className="bg-slate-100 text-slate-700 text-xs font-bold px-2 py-1 rounded-md">{totalPecas} peças</span>
+                                                        </div>
+                                                        <div className="space-y-1">
+                                                            {emp.uniforms.slice(0, 3).map((u, i) => (
+                                                                <div key={i} className="text-sm flex justify-between items-center text-slate-600">
+                                                                    <span className="truncate pr-2">• {u.type} ({u.size})</span>
+                                                                    <span className="font-medium text-slate-400">x{u.quantity}</span>
+                                                                </div>
+                                                            ))}
+                                                            {emp.uniforms.length === 0 && <p className="text-sm text-slate-400 italic">Nenhum fardamento entregue.</p>}
+                                                            {emp.uniforms.length > 3 && <p className="text-xs text-blue-500 font-medium pt-1">+ {emp.uniforms.length - 3} itens</p>}
+                                                        </div>
+                                                    </div>
+                                                    <div className="p-4 bg-white border-t border-slate-100">
+                                                        <button onClick={() => setManagingEmployee(emp)} className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-sm font-medium transition-colors flex justify-center items-center gap-2">
+                                                            <ShirtIcon size={16} /> Gerenciar Fardamento
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })
+                                    ) : (
+                                        <div className="col-span-full py-16 text-center text-slate-400">
+                                            <UsersIcon size={40} className="mx-auto mb-3 opacity-30" />
+                                            <h3 className="text-lg font-medium text-slate-600">Nenhum colaborador encontrado</h3>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* --- ABA 2: ESTOQUE --- */}
+                        {activeTab === 'INVENTORY' && (
+                            <div className="animate-fade-in-up">
+                                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 mb-6 flex flex-col md:flex-row gap-4 justify-between items-center">
+                                    <div className="relative w-full md:w-96">
+                                        <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"><SearchIcon size={20} /></div>
+                                        <input type="text" placeholder="Buscar material no estoque..." className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" value={invSearch} onChange={(e) => setInvSearch(e.target.value)} />
+                                    </div>
+                                    <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+                                        <button onClick={exportInventoryPDF} disabled={filteredInventory.length === 0} className="w-full sm:w-auto px-4 py-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-medium flex items-center justify-center gap-2 shadow-sm transition-colors disabled:opacity-50">
+                                            <FileTextIcon size={20} className="text-red-500" /> Exportar PDF
+                                        </button>
+                                        <button onClick={() => setIsAddingInventory(true)} className="w-full sm:w-auto px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-medium flex items-center justify-center gap-2 shadow-sm transition-colors">
+                                            <PlusIcon size={20} /> Entrada de Material
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-left whitespace-nowrap">
+                                            <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-xs tracking-wider">
+                                                <tr>
+                                                    <th className="px-6 py-4">Descrição do Material</th>
+                                                    <th className="px-6 py-4">Tipo</th>
+                                                    <th className="px-6 py-4">Tamanho</th>
+                                                    <th className="px-6 py-4 text-center">Quantidade</th>
+                                                    <th className="px-6 py-4 text-right">Ações Rápidas</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-slate-100">
+                                                {paginatedInventory.length > 0 ? (
+                                                    paginatedInventory.map(item => (
+                                                        <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
+                                                            <td className="px-6 py-4 font-bold text-slate-800">{item.name}</td>
+                                                            <td className="px-6 py-4 text-slate-600">{item.type}</td>
+                                                            <td className="px-6 py-4"><span className="bg-slate-100 text-slate-700 font-bold px-2.5 py-1 rounded-lg border border-slate-200">{item.size}</span></td>
+                                                            <td className="px-6 py-4 text-center">
+                                                                <span className={`font-bold px-3 py-1 rounded-full text-sm ${item.quantity > 5 ? 'bg-emerald-100 text-emerald-700' : item.quantity > 0 ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}`}>
+                                                                    {item.quantity} un
+                                                                </span>
+                                                            </td>
+                                                            <td className="px-6 py-4 flex items-center justify-end gap-2">
+                                                                <div className="flex bg-slate-100 rounded-lg p-1 border border-slate-200">
+                                                                    <button onClick={() => adjustInventoryStock(item.id, -1)} className="p-1 hover:bg-white hover:text-red-600 hover:shadow-sm rounded text-slate-500 transition-all"><MinusIcon size={16}/></button>
+                                                                    <span className="w-8 text-center font-bold text-sm leading-6">{item.quantity}</span>
+                                                                    <button onClick={() => adjustInventoryStock(item.id, 1)} className="p-1 hover:bg-white hover:text-emerald-600 hover:shadow-sm rounded text-slate-500 transition-all"><PlusIcon size={16}/></button>
+                                                                </div>
+                                                                <button onClick={() => openEditInventory(item)} className="p-2 text-blue-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors ml-2" title="Editar registro">
+                                                                    <EditIcon size={18} />
+                                                                </button>
+                                                                <button onClick={() => removeInventoryItem(item.id)} className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Remover registro">
+                                                                    <TrashIcon size={18} />
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    ))
+                                                ) : (
+                                                    <tr>
+                                                        <td colSpan="5" className="px-6 py-12 text-center text-slate-400">
+                                                            <PackageIcon size={40} className="mx-auto mb-3 opacity-30" />
+                                                            Nenhum material encontrado no estoque.
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    
+                                    {/* Paginação Inteligente */}
+                                    {totalInvPages > 1 && (
+                                        <div className="bg-slate-50 px-6 py-4 border-t border-slate-200 flex items-center justify-between">
+                                            <span className="text-sm text-slate-500 font-medium">
+                                                Mostrando {(invPage - 1) * invItemsPerPage + 1} até {Math.min(invPage * invItemsPerPage, filteredInventory.length)} de {filteredInventory.length} itens
+                                            </span>
+                                            <div className="flex gap-1">
+                                                <button onClick={() => setInvPage(p => Math.max(1, p - 1))} disabled={invPage === 1} className="p-2 rounded-lg border border-slate-300 bg-white text-slate-600 disabled:opacity-50 hover:bg-slate-100"><ChevronLeftIcon size={16}/></button>
+                                                <span className="px-4 py-2 font-bold text-slate-700">Pág {invPage} de {totalInvPages}</span>
+                                                <button onClick={() => setInvPage(p => Math.min(totalInvPages, p + 1))} disabled={invPage === totalInvPages} className="p-2 rounded-lg border border-slate-300 bg-white text-slate-600 disabled:opacity-50 hover:bg-slate-100"><ChevronRightIcon size={16}/></button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                    </main>
+
+                    {/* --- MODAIS DE AÇÃO --- */}
+
+                    {/* Modal Genérico de Confirmação (Substitui o window.confirm) */}
+                    {confirmDialog && (
+                        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[80] flex items-center justify-center p-4">
+                            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-fade-in-up">
+                                <div className="p-6 text-center">
+                                    <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-white shadow-sm">
+                                        <AlertTriangleIcon size={32} className="text-red-600" />
+                                    </div>
+                                    <h3 className="text-lg font-bold text-slate-800 mb-2">{confirmDialog.title}</h3>
+                                    <p className="text-sm text-slate-500">{confirmDialog.message}</p>
+                                </div>
+                                <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-center gap-3">
+                                    <button onClick={() => setConfirmDialog(null)} className="px-5 py-2.5 text-slate-600 hover:bg-slate-200 rounded-xl text-sm font-bold transition-colors w-full">Cancelar</button>
+                                    <button onClick={() => { confirmDialog.onConfirm(); setConfirmDialog(null); }} className="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-bold transition-colors w-full">Sim, Confirmar</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Modal Adicionar Colaborador */}
+                    {isAddingEmployee && (
+                        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in-up">
+                                <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                                    <h3 className="font-bold text-slate-800 flex items-center gap-2"><UserPlusIcon size={20} className="text-blue-600" /> Novo Colaborador</h3>
+                                    <button onClick={() => setIsAddingEmployee(false)} className="text-slate-400 hover:text-slate-600 bg-white rounded-full p-1 hover:bg-slate-200 transition-colors"><XIcon size={20} /></button>
+                                </div>
+                                <form onSubmit={handleAddEmployee}>
+                                    <div className="p-6 space-y-4">
+                                        <div>
+                                            <label className="block text-sm font-bold text-slate-700 mb-1">Nome Completo</label>
+                                            <input type="text" autoFocus required className="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500" value={newEmpName} onChange={(e) => setNewEmpName(e.target.value)} />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-bold text-slate-700 mb-1">Cargo / Função</label>
+                                            <select className="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 bg-white" value={newEmpRole} onChange={(e) => setNewEmpRole(e.target.value)}>
+                                                <option>Agente de Segurança</option><option>Vigilante</option><option>Vigilante Líder</option><option>Supervisor de Segurança</option><option>Porteiro</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-bold text-slate-700 mb-1">Posto de Serviço</label>
+                                            <input type="text" className="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500" value={newEmpPost} onChange={(e) => setNewEmpPost(e.target.value)} />
+                                        </div>
+                                    </div>
+                                    <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+                                        <button type="button" onClick={() => setIsAddingEmployee(false)} className="px-5 py-2.5 text-slate-600 hover:bg-slate-200 rounded-xl text-sm font-bold transition-colors">Cancelar</button>
+                                        <button type="submit" disabled={!newEmpName.trim()} className="px-5 py-2.5 bg-blue-600 disabled:opacity-50 hover:bg-blue-700 text-white rounded-xl text-sm font-bold transition-colors">Cadastrar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Modal Adicionar Estoque */}
+                    {isAddingInventory && (
+                        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in-up">
+                                <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-emerald-50">
+                                    <h3 className="font-bold text-emerald-900 flex items-center gap-2"><PackageIcon size={20} className="text-emerald-600" /> Nova Entrada no Estoque</h3>
+                                    <button onClick={() => setIsAddingInventory(false)} className="text-emerald-400 hover:text-emerald-600 bg-white rounded-full p-1 transition-colors"><XIcon size={20} /></button>
+                                </div>
+                                <form onSubmit={handleAddInventory}>
+                                    <div className="p-6 space-y-4">
+                                        <div>
+                                            <label className="block text-sm font-bold text-slate-700 mb-1">Nome/Descrição da Peça</label>
+                                            <input type="text" autoFocus required placeholder="Ex: Camisa Polo Tática..." className="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500" value={invNewName} onChange={(e) => setInvNewName(e.target.value)} />
+                                        </div>
+                                        <div className="flex gap-4">
+                                            <div className="flex-1">
+                                                <label className="block text-sm font-bold text-slate-700 mb-1">Categoria</label>
+                                                <select className="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 bg-white" value={invNewType} onChange={(e) => setInvNewType(e.target.value)}>
+                                                    {uniformTypes.map(t => <option key={t}>{t}</option>)}
+                                                </select>
+                                            </div>
+                                            <div className="w-1/3">
+                                                <label className="block text-sm font-bold text-slate-700 mb-1">Tam/Nº</label>
+                                                <input type="text" required placeholder="G, 42..." className="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500" value={invNewSize} onChange={(e) => setInvNewSize(e.target.value)} />
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-bold text-slate-700 mb-1">Quantidade Entrando</label>
+                                            <input type="number" min="1" required className="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500" value={invNewQty} onChange={(e) => setInvNewQty(e.target.value)} />
+                                        </div>
+                                    </div>
+                                    <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+                                        <button type="button" onClick={() => setIsAddingInventory(false)} className="px-5 py-2.5 text-slate-600 hover:bg-slate-200 rounded-xl text-sm font-bold">Cancelar</button>
+                                        <button type="submit" disabled={!invNewName.trim() || !invNewSize.trim()} className="px-5 py-2.5 bg-emerald-600 disabled:opacity-50 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold">Salvar no Estoque</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Modal Editar Colaborador */}
+                    {editingEmployee && (
+                        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in-up">
+                                <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                                    <h3 className="font-bold text-slate-800 flex items-center gap-2"><EditIcon size={20} className="text-blue-600" /> Editar Colaborador</h3>
+                                    <button onClick={() => setEditingEmployee(null)} className="text-slate-400 hover:text-slate-600 bg-white rounded-full p-1 hover:bg-slate-200 transition-colors"><XIcon size={20} /></button>
+                                </div>
+                                <form onSubmit={handleSaveEmployeeEdit}>
+                                    <div className="p-6 space-y-4">
+                                        <div>
+                                            <label className="block text-sm font-bold text-slate-700 mb-1">Nome Completo</label>
+                                            <input type="text" autoFocus required className="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500" value={editEmpData.name} onChange={(e) => setEditEmpData({...editEmpData, name: e.target.value})} />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-bold text-slate-700 mb-1">Cargo / Função</label>
+                                            <select className="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 bg-white" value={editEmpData.role} onChange={(e) => setEditEmpData({...editEmpData, role: e.target.value})}>
+                                                <option>Agente de Segurança</option><option>Vigilante</option><option>Vigilante Líder</option><option>Supervisor de Segurança</option><option>Porteiro</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-bold text-slate-700 mb-1">Posto de Serviço</label>
+                                            <input type="text" className="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500" value={editEmpData.post} onChange={(e) => setEditEmpData({...editEmpData, post: e.target.value})} />
+                                        </div>
+                                    </div>
+                                    <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+                                        <button type="button" onClick={() => setEditingEmployee(null)} className="px-5 py-2.5 text-slate-600 hover:bg-slate-200 rounded-xl text-sm font-bold transition-colors">Cancelar</button>
+                                        <button type="submit" disabled={!editEmpData.name.trim()} className="px-5 py-2.5 bg-blue-600 disabled:opacity-50 hover:bg-blue-700 text-white rounded-xl text-sm font-bold transition-colors">Salvar Alterações</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Modal Editar Estoque */}
+                    {editingInventory && (
+                        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in-up">
+                                <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-emerald-50">
+                                    <h3 className="font-bold text-emerald-900 flex items-center gap-2"><EditIcon size={20} className="text-emerald-600" /> Editar Material</h3>
+                                    <button onClick={() => setEditingInventory(null)} className="text-emerald-400 hover:text-emerald-600 bg-white rounded-full p-1 transition-colors"><XIcon size={20} /></button>
+                                </div>
+                                <form onSubmit={handleSaveInventoryEdit}>
+                                    <div className="p-6 space-y-4">
+                                        <div>
+                                            <label className="block text-sm font-bold text-slate-700 mb-1">Nome/Descrição da Peça</label>
+                                            <input type="text" autoFocus required className="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500" value={editInvData.name} onChange={(e) => setEditInvData({...editInvData, name: e.target.value})} />
+                                        </div>
+                                        <div className="flex gap-4">
+                                            <div className="flex-1">
+                                                <label className="block text-sm font-bold text-slate-700 mb-1">Categoria</label>
+                                                <select className="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 bg-white" value={editInvData.type} onChange={(e) => setEditInvData({...editInvData, type: e.target.value})}>
+                                                    {uniformTypes.map(t => <option key={t}>{t}</option>)}
+                                                </select>
+                                            </div>
+                                            <div className="w-1/3">
+                                                <label className="block text-sm font-bold text-slate-700 mb-1">Tam/Nº</label>
+                                                <input type="text" required className="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500" value={editInvData.size} onChange={(e) => setEditInvData({...editInvData, size: e.target.value})} />
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-bold text-slate-700 mb-1">Quantidade</label>
+                                            <input type="number" min="0" required className="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500" value={editInvData.quantity} onChange={(e) => setEditInvData({...editInvData, quantity: e.target.value})} />
+                                        </div>
+                                    </div>
+                                    <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+                                        <button type="button" onClick={() => setEditingInventory(null)} className="px-5 py-2.5 text-slate-600 hover:bg-slate-200 rounded-xl text-sm font-bold">Cancelar</button>
+                                        <button type="submit" disabled={!editInvData.name.trim() || !editInvData.size.trim()} className="px-5 py-2.5 bg-emerald-600 disabled:opacity-50 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold">Salvar Alterações</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Modal Gerenciar Fardamento do Empregado */}
+                    {managingEmployee && (
+                        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 flex items-center justify-center p-2 sm:p-4">
+                            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col animate-fade-in-up">
+                                <div className="px-6 py-5 border-b border-slate-100 flex justify-between items-start bg-slate-900 text-white rounded-t-2xl">
+                                    <div className="flex gap-4 items-center">
+                                        <div className="h-12 w-12 rounded-full bg-slate-800 flex items-center justify-center border border-slate-700"><UsersIcon size={24} className="text-blue-400"/></div>
+                                        <div>
+                                            <h2 className="font-bold text-lg">{managingEmployee.name}</h2>
+                                            <p className="text-slate-400 text-sm">{managingEmployee.role} • {managingEmployee.post || 'Sem posto fixo'}</p>
+                                        </div>
+                                    </div>
+                                    <button onClick={() => {setManagingEmployee(null); setIsAddingUniform(false);}} className="text-slate-400 hover:text-white bg-slate-800 p-1.5 rounded-full"><XIcon size={20} /></button>
+                                </div>
+
+                                <div className="flex-1 overflow-y-auto p-6 bg-slate-50">
+                                    {isAddingUniform ? (
+                                        <div className="bg-white p-5 rounded-xl border border-blue-200 shadow-sm mb-6 relative overflow-hidden">
+                                            <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                                            <div className="flex justify-between items-center mb-4">
+                                                <h4 className="font-bold text-slate-800 flex items-center gap-2"><PlusIcon size={18} className="text-blue-600" /> Entrega de Nova Peça</h4>
+                                                <button onClick={() => setIsAddingUniform(false)} className="text-slate-400 text-sm font-medium hover:text-slate-600">Cancelar</button>
+                                            </div>
+                                            <form onSubmit={handleAddUniform} className="flex flex-col md:flex-row gap-4 items-end">
+                                                <div className="flex-1 w-full">
+                                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Tipo de Peça</label>
+                                                    <select className="w-full p-2.5 border border-slate-300 rounded-lg bg-white" value={newUniType} onChange={(e) => setNewUniType(e.target.value)}>
+                                                        {uniformTypes.map(type => <option key={type}>{type}</option>)}
+                                                    </select>
+                                                </div>
+                                                <div className="w-full md:w-32">
+                                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Tamanho/Nº</label>
+                                                    <input type="text" required className="w-full p-2.5 border border-slate-300 rounded-lg" value={newUniSize} onChange={(e) => setNewUniSize(e.target.value)} />
+                                                </div>
+                                                <div className="w-full md:w-24">
+                                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Qtd</label>
+                                                    <input type="number" min="1" required className="w-full p-2.5 border border-slate-300 rounded-lg" value={newUniQty} onChange={(e) => setNewUniQty(e.target.value)} />
+                                                </div>
+                                                <button type="submit" disabled={!newUniSize.trim()} className="w-full md:w-auto px-6 py-2.5 bg-blue-600 text-white rounded-lg font-bold">Adicionar</button>
+                                            </form>
+                                        </div>
+                                    ) : (
+                                        <button onClick={() => setIsAddingUniform(true)} className="w-full mb-6 py-3 border-2 border-dashed border-slate-300 text-slate-600 hover:border-blue-500 hover:text-blue-600 rounded-xl font-bold flex items-center justify-center gap-2 bg-white">
+                                            <PlusIcon size={20} /> Registrar Nova Entrega de Fardamento
+                                        </button>
+                                    )}
+
+                                    <div>
+                                        <h4 className="font-bold text-slate-800 mb-3 flex items-center gap-2"><ShirtIcon size={18} className="text-slate-500"/> Fardamento Cautelado</h4>
+                                        {managingEmployee.uniforms.length > 0 ? (
+                                            <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden overflow-x-auto">
+                                                <table className="w-full text-left text-sm whitespace-nowrap">
+                                                    <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase text-xs">
+                                                        <tr>
+                                                            <th className="px-4 py-3">Peça</th><th className="px-4 py-3">Tam</th><th className="px-4 py-3">Qtd</th><th className="px-4 py-3">Data</th><th className="px-4 py-3 text-right">Ação</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody className="divide-y divide-slate-100">
+                                                        {managingEmployee.uniforms.map(item => (
+                                                            <tr key={item.id}>
+                                                                <td className="px-4 py-3 font-medium text-slate-800">{item.type}</td>
+                                                                <td className="px-4 py-3"><span className="bg-slate-100 font-bold px-2 py-1 rounded">{item.size}</span></td>
+                                                                <td className="px-4 py-3">{item.quantity}</td>
+                                                                <td className="px-4 py-3 text-slate-500 text-xs flex items-center gap-1 mt-1.5"><CalendarIcon size={12} /> {item.assignedAt.split(' ')[0]}</td>
+                                                                <td className="px-4 py-3 text-right">
+                                                                    <button onClick={() => openEditUniform(item)} className="text-blue-500 hover:bg-blue-50 p-1.5 rounded mr-1" title="Editar Peça"><EditIcon size={16} /></button>
+                                                                    <button onClick={() => handleRemoveUniform(item.id)} className="text-red-500 hover:bg-red-50 p-1.5 rounded" title="Devolver/Dar Baixa"><TrashIcon size={16} /></button>
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        ) : (
+                                            <div className="text-center py-10 bg-white rounded-xl border border-slate-200 text-slate-400">
+                                                <ShirtIcon size={40} className="mx-auto mb-2 opacity-30" /> Nenhum fardamento vinculado.
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="px-6 py-4 border-t border-slate-100 bg-white rounded-b-2xl flex justify-between items-center">
+                                    <button onClick={() => handleDeleteEmployee(managingEmployee.id)} className="text-red-500 hover:text-red-700 text-sm font-bold flex items-center gap-1.5">
+                                        <TrashIcon size={16} /> Excluir Colaborador
+                                    </button>
+                                    <button onClick={() => {setManagingEmployee(null); setIsAddingUniform(false);}} className="px-6 py-2.5 bg-slate-900 text-white rounded-xl text-sm font-bold">Concluir</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Modal Editar Peça do Empregado */}
+                    {editingUniform && (
+                        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+                            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in-up border border-slate-200">
+                                <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-blue-50">
+                                    <h3 className="font-bold text-blue-900 flex items-center gap-2"><EditIcon size={20} className="text-blue-600" /> Editar Peça Entregue</h3>
+                                    <button onClick={() => setEditingUniform(null)} className="text-blue-400 hover:text-blue-600 bg-white rounded-full p-1 transition-colors"><XIcon size={20} /></button>
+                                </div>
+                                <form onSubmit={handleSaveUniformEdit}>
+                                    <div className="p-6 space-y-4">
+                                        <div className="flex-1 w-full">
+                                            <label className="block text-sm font-bold text-slate-700 mb-1">Tipo de Peça</label>
+                                            <select className="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 bg-white" value={editUniData.type} onChange={(e) => setEditUniData({...editUniData, type: e.target.value})}>
+                                                {uniformTypes.map(type => <option key={type}>{type}</option>)}
+                                            </select>
+                                        </div>
+                                        <div className="flex gap-4">
+                                            <div className="w-1/2">
+                                                <label className="block text-sm font-bold text-slate-700 mb-1">Tamanho/Nº</label>
+                                                <input type="text" required className="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500" value={editUniData.size} onChange={(e) => setEditUniData({...editUniData, size: e.target.value})} />
+                                            </div>
+                                            <div className="w-1/2">
+                                                <label className="block text-sm font-bold text-slate-700 mb-1">Quantidade</label>
+                                                <input type="number" min="1" required className="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500" value={editUniData.quantity} onChange={(e) => setEditUniData({...editUniData, quantity: e.target.value})} />
+                                            </div>
+                                        </div>
+                                        <div className="bg-amber-50 p-3 rounded-lg border border-amber-200 mt-2">
+                                            <p className="text-xs text-amber-800 flex items-center gap-2">
+                                                <AlertTriangleIcon size={14} className="flex-shrink-0" />
+                                                O estoque será ajustado automaticamente após salvar as alterações.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+                                        <button type="button" onClick={() => setEditingUniform(null)} className="px-5 py-2.5 text-slate-600 hover:bg-slate-200 rounded-xl text-sm font-bold transition-colors">Cancelar</button>
+                                        <button type="submit" disabled={!editUniData.size.trim()} className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-bold transition-colors">Salvar Alterações</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<AlmoxarifadoApp />);
+    </script>
+</body>
+</html>

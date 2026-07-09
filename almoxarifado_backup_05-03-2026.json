@@ -1,0 +1,684 @@
+{
+  "employees": [
+    {
+      "id": "emp_default_0_1772741566102",
+      "name": "Alex Neves Luz",
+      "role": "Agente de Segurança",
+      "post": "A definir",
+      "uniforms": [
+        {
+          "id": "u_emp_default_0_1772741566102_0",
+          "type": "Camisa",
+          "size": "M",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_0_1772741566102_1",
+          "type": "Calça",
+          "size": "42",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_0_1772741566102_2",
+          "type": "Bota/Coturno",
+          "size": "40",
+          "quantity": 1,
+          "assignedAt": "05/03/2026, 17:12:46"
+        }
+      ]
+    },
+    {
+      "id": "emp_default_1_1772741566120",
+      "name": "Bruno de Jesus Dias Gomes",
+      "role": "Agente de Segurança",
+      "post": "A definir",
+      "uniforms": [
+        {
+          "id": "u_emp_default_1_1772741566120_0",
+          "type": "Camisa",
+          "size": "M",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_1_1772741566120_1",
+          "type": "Calça",
+          "size": "42",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_1_1772741566120_2",
+          "type": "Bota/Coturno",
+          "size": "40",
+          "quantity": 1,
+          "assignedAt": "05/03/2026, 17:12:46"
+        }
+      ]
+    },
+    {
+      "id": "emp_default_2_1772741566120",
+      "name": "Carlos Arantes Evaristo",
+      "role": "Agente de Segurança",
+      "post": "A definir",
+      "uniforms": [
+        {
+          "id": "u_emp_default_2_1772741566120_0",
+          "type": "Camisa",
+          "size": "M",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_2_1772741566120_1",
+          "type": "Calça",
+          "size": "42",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_2_1772741566120_2",
+          "type": "Bota/Coturno",
+          "size": "40",
+          "quantity": 1,
+          "assignedAt": "05/03/2026, 17:12:46"
+        }
+      ]
+    },
+    {
+      "id": "emp_default_3_1772741566121",
+      "name": "Carlos Eduardo Barroso Paschoalin",
+      "role": "Agente de Segurança",
+      "post": "A definir",
+      "uniforms": [
+        {
+          "id": "u_emp_default_3_1772741566121_0",
+          "type": "Camisa",
+          "size": "M",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_3_1772741566121_1",
+          "type": "Calça",
+          "size": "42",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_3_1772741566121_2",
+          "type": "Bota/Coturno",
+          "size": "40",
+          "quantity": 1,
+          "assignedAt": "05/03/2026, 17:12:46"
+        }
+      ]
+    },
+    {
+      "id": "emp_default_4_1772741566121",
+      "name": "Carlos Eduardo de Paiva Faria",
+      "role": "Agente de Segurança",
+      "post": "A definir",
+      "uniforms": [
+        {
+          "id": "u_emp_default_4_1772741566121_0",
+          "type": "Camisa",
+          "size": "M",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_4_1772741566121_1",
+          "type": "Calça",
+          "size": "42",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_4_1772741566121_2",
+          "type": "Bota/Coturno",
+          "size": "40",
+          "quantity": 1,
+          "assignedAt": "05/03/2026, 17:12:46"
+        }
+      ]
+    },
+    {
+      "id": "emp_default_5_1772741566121",
+      "name": "Edilza Ferreira Dias",
+      "role": "Agente de Segurança",
+      "post": "A definir",
+      "uniforms": [
+        {
+          "id": "u_emp_default_5_1772741566121_0",
+          "type": "Camisa",
+          "size": "M",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_5_1772741566121_1",
+          "type": "Calça",
+          "size": "42",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_5_1772741566121_2",
+          "type": "Bota/Coturno",
+          "size": "40",
+          "quantity": 1,
+          "assignedAt": "05/03/2026, 17:12:46"
+        }
+      ]
+    },
+    {
+      "id": "emp_default_6_1772741566121",
+      "name": "Erivelton Aloisio",
+      "role": "Agente de Segurança",
+      "post": "A definir",
+      "uniforms": [
+        {
+          "id": "u_emp_default_6_1772741566121_0",
+          "type": "Camisa",
+          "size": "M",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_6_1772741566121_1",
+          "type": "Calça",
+          "size": "42",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_6_1772741566121_2",
+          "type": "Bota/Coturno",
+          "size": "40",
+          "quantity": 1,
+          "assignedAt": "05/03/2026, 17:12:46"
+        }
+      ]
+    },
+    {
+      "id": "emp_default_7_1772741566121",
+      "name": "Filipe Trindade de Oliveira",
+      "role": "Agente de Segurança",
+      "post": "A definir",
+      "uniforms": [
+        {
+          "id": "u_emp_default_7_1772741566121_0",
+          "type": "Camisa",
+          "size": "M",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_7_1772741566121_1",
+          "type": "Calça",
+          "size": "42",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_7_1772741566121_2",
+          "type": "Bota/Coturno",
+          "size": "40",
+          "quantity": 1,
+          "assignedAt": "05/03/2026, 17:12:46"
+        }
+      ]
+    },
+    {
+      "id": "emp_default_8_1772741566121",
+      "name": "Flávio Martins Santiago",
+      "role": "Agente de Segurança",
+      "post": "A definir",
+      "uniforms": [
+        {
+          "id": "u_emp_default_8_1772741566121_0",
+          "type": "Camisa",
+          "size": "M",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_8_1772741566121_1",
+          "type": "Calça",
+          "size": "42",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_8_1772741566121_2",
+          "type": "Bota/Coturno",
+          "size": "40",
+          "quantity": 1,
+          "assignedAt": "05/03/2026, 17:12:46"
+        }
+      ]
+    },
+    {
+      "id": "emp_default_9_1772741566121",
+      "name": "Ramon Rocha de Souza",
+      "role": "Agente de Segurança",
+      "post": "A definir",
+      "uniforms": [
+        {
+          "id": "u_emp_default_9_1772741566121_0",
+          "type": "Camisa",
+          "size": "M",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_9_1772741566121_1",
+          "type": "Calça",
+          "size": "42",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_9_1772741566121_2",
+          "type": "Bota/Coturno",
+          "size": "40",
+          "quantity": 1,
+          "assignedAt": "05/03/2026, 17:12:46"
+        }
+      ]
+    },
+    {
+      "id": "emp_default_10_1772741566121",
+      "name": "Leidimara Elaine de Oliveira",
+      "role": "Agente de Segurança",
+      "post": "A definir",
+      "uniforms": [
+        {
+          "id": "u_emp_default_10_1772741566121_0",
+          "type": "Camisa",
+          "size": "M",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_10_1772741566121_1",
+          "type": "Calça",
+          "size": "42",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_10_1772741566121_2",
+          "type": "Bota/Coturno",
+          "size": "40",
+          "quantity": 1,
+          "assignedAt": "05/03/2026, 17:12:46"
+        }
+      ]
+    },
+    {
+      "id": "emp_default_11_1772741566121",
+      "name": "José Márcio Feitosa Minas",
+      "role": "Agente de Segurança",
+      "post": "A definir",
+      "uniforms": [
+        {
+          "id": "u_emp_default_11_1772741566121_0",
+          "type": "Camisa",
+          "size": "M",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_11_1772741566121_1",
+          "type": "Calça",
+          "size": "42",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_11_1772741566121_2",
+          "type": "Bota/Coturno",
+          "size": "40",
+          "quantity": 1,
+          "assignedAt": "05/03/2026, 17:12:46"
+        }
+      ]
+    },
+    {
+      "id": "emp_default_12_1772741566121",
+      "name": "Juliane Pacheco de Campos",
+      "role": "Agente de Segurança",
+      "post": "A definir",
+      "uniforms": [
+        {
+          "id": "u_emp_default_12_1772741566121_0",
+          "type": "Camisa",
+          "size": "M",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_12_1772741566121_1",
+          "type": "Calça",
+          "size": "42",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_12_1772741566121_2",
+          "type": "Bota/Coturno",
+          "size": "40",
+          "quantity": 1,
+          "assignedAt": "05/03/2026, 17:12:46"
+        }
+      ]
+    },
+    {
+      "id": "emp_default_13_1772741566121",
+      "name": "Luciane Mirtes Rezende",
+      "role": "Agente de Segurança",
+      "post": "A definir",
+      "uniforms": [
+        {
+          "id": "u_emp_default_13_1772741566121_0",
+          "type": "Camisa",
+          "size": "M",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_13_1772741566121_1",
+          "type": "Calça",
+          "size": "42",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_13_1772741566121_2",
+          "type": "Bota/Coturno",
+          "size": "40",
+          "quantity": 1,
+          "assignedAt": "05/03/2026, 17:12:46"
+        }
+      ]
+    },
+    {
+      "id": "emp_default_14_1772741566121",
+      "name": "Luciano do Nascimento",
+      "role": "Agente de Segurança",
+      "post": "A definir",
+      "uniforms": [
+        {
+          "id": "u_emp_default_14_1772741566121_0",
+          "type": "Camisa",
+          "size": "M",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_14_1772741566121_1",
+          "type": "Calça",
+          "size": "42",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_14_1772741566121_2",
+          "type": "Bota/Coturno",
+          "size": "40",
+          "quantity": 1,
+          "assignedAt": "05/03/2026, 17:12:46"
+        }
+      ]
+    },
+    {
+      "id": "emp_default_15_1772741566121",
+      "name": "Luciano Trindade de Oliveira",
+      "role": "Agente de Segurança",
+      "post": "A definir",
+      "uniforms": [
+        {
+          "id": "u_emp_default_15_1772741566121_0",
+          "type": "Camisa",
+          "size": "M",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_15_1772741566121_1",
+          "type": "Calça",
+          "size": "42",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_15_1772741566121_2",
+          "type": "Bota/Coturno",
+          "size": "40",
+          "quantity": 1,
+          "assignedAt": "05/03/2026, 17:12:46"
+        }
+      ]
+    },
+    {
+      "id": "emp_default_16_1772741566121",
+      "name": "Marcos Vinícios de Souza Franck",
+      "role": "Agente de Segurança",
+      "post": "A definir",
+      "uniforms": [
+        {
+          "id": "u_emp_default_16_1772741566121_0",
+          "type": "Camisa",
+          "size": "M",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_16_1772741566121_1",
+          "type": "Calça",
+          "size": "42",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_16_1772741566121_2",
+          "type": "Bota/Coturno",
+          "size": "40",
+          "quantity": 1,
+          "assignedAt": "05/03/2026, 17:12:46"
+        }
+      ]
+    },
+    {
+      "id": "emp_default_17_1772741566121",
+      "name": "Matheus Dias Schaefer",
+      "role": "Agente de Segurança",
+      "post": "A definir",
+      "uniforms": [
+        {
+          "id": "u_emp_default_17_1772741566121_0",
+          "type": "Camisa",
+          "size": "M",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_17_1772741566121_1",
+          "type": "Calça",
+          "size": "42",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_17_1772741566121_2",
+          "type": "Bota/Coturno",
+          "size": "40",
+          "quantity": 1,
+          "assignedAt": "05/03/2026, 17:12:46"
+        }
+      ]
+    },
+    {
+      "id": "emp_default_18_1772741566121",
+      "name": "Thiago Luiz Dos Reis Silva",
+      "role": "Agente de Segurança",
+      "post": "A definir",
+      "uniforms": [
+        {
+          "id": "u_emp_default_18_1772741566121_0",
+          "type": "Camisa",
+          "size": "M",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_18_1772741566121_1",
+          "type": "Calça",
+          "size": "42",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_18_1772741566121_2",
+          "type": "Bota/Coturno",
+          "size": "40",
+          "quantity": 1,
+          "assignedAt": "05/03/2026, 17:12:46"
+        }
+      ]
+    },
+    {
+      "id": "emp_default_19_1772741566121",
+      "name": "Walber Silva Palaroni",
+      "role": "Agente de Segurança",
+      "post": "A definir",
+      "uniforms": [
+        {
+          "id": "u_emp_default_19_1772741566121_0",
+          "type": "Camisa",
+          "size": "M",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_19_1772741566121_1",
+          "type": "Calça",
+          "size": "42",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_19_1772741566121_2",
+          "type": "Bota/Coturno",
+          "size": "40",
+          "quantity": 1,
+          "assignedAt": "05/03/2026, 17:12:46"
+        }
+      ]
+    },
+    {
+      "id": "emp_default_20_1772741566121",
+      "name": "Welerton de Jesus Teixeira",
+      "role": "Agente de Segurança",
+      "post": "A definir",
+      "uniforms": [
+        {
+          "id": "u_emp_default_20_1772741566121_0",
+          "type": "Camisa",
+          "size": "M",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_20_1772741566121_1",
+          "type": "Calça",
+          "size": "42",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_20_1772741566121_2",
+          "type": "Bota/Coturno",
+          "size": "40",
+          "quantity": 1,
+          "assignedAt": "05/03/2026, 17:12:46"
+        }
+      ]
+    },
+    {
+      "id": "emp_default_21_1772741566121",
+      "name": "Rafael de Jesus Santos",
+      "role": "Agente de Segurança",
+      "post": "A definir",
+      "uniforms": [
+        {
+          "id": "u_emp_default_21_1772741566121_0",
+          "type": "Camisa",
+          "size": "M",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_21_1772741566121_1",
+          "type": "Calça",
+          "size": "42",
+          "quantity": 2,
+          "assignedAt": "05/03/2026, 17:12:46"
+        },
+        {
+          "id": "u_emp_default_21_1772741566121_2",
+          "type": "Bota/Coturno",
+          "size": "40",
+          "quantity": 1,
+          "assignedAt": "05/03/2026, 17:12:46"
+        }
+      ]
+    }
+  ],
+  "inventory": [
+    {
+      "id": "inv1",
+      "name": "Camisa Tática Padrão",
+      "type": "Camisa",
+      "size": "M",
+      "quantity": 100,
+      "addedAt": "05/03/2026, 17:26:04"
+    },
+    {
+      "id": "inv2",
+      "name": "Calça Operacional",
+      "type": "Calça",
+      "size": "42",
+      "quantity": 100,
+      "addedAt": "05/03/2026, 17:26:04"
+    },
+    {
+      "id": "inv3",
+      "name": "Coturno Tático",
+      "type": "Bota",
+      "size": "40",
+      "quantity": 50,
+      "addedAt": "05/03/2026, 17:26:04"
+    },
+    {
+      "id": "inv4",
+      "name": "Camisa Branca",
+      "type": "Camisa branca Comum",
+      "size": "M",
+      "quantity": 50,
+      "addedAt": "05/03/2026, 17:26:04"
+    },
+    {
+      "id": "inv5",
+      "name": "Cinto de Guarnição",
+      "type": "Cinto",
+      "size": "ÚNICO",
+      "quantity": 50,
+      "addedAt": "05/03/2026, 17:26:04"
+    }
+  ]
+}
